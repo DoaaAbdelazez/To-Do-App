@@ -28,17 +28,12 @@ void navigate(){
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.background,
         body: Center(child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(AppAssets.logo),
             const SizedBox(height: 24,),
-              Text(AppStrings.appName, style: GoogleFonts.lato(
-                color: AppColors.white,
-                fontWeight:FontWeight.bold ,
-                fontSize: 40
-              ),) 
+              Text(AppStrings.appName, style: Theme.of(context).textTheme.displayLarge!.copyWith(fontSize: 40)) 
           ],
         )),
       );
