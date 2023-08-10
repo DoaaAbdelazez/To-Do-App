@@ -3,11 +3,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:to_do_app/core/database/cache/cache_helper.dart';
 import 'package:to_do_app/core/utils/app_assets.dart';
 import 'package:to_do_app/core/utils/app_colors.dart';
 import 'package:to_do_app/core/utils/app_strings.dart';
 import 'package:to_do_app/features/auth/data/model/on_boarding_moddel.dart';
 import 'package:to_do_app/features/task/presentation/screens/home_screen.dart';
+
+import '../../../../../core/services/service_locator.dart';
 
 class OnBoardingScreens extends StatelessWidget {
   OnBoardingScreens({super.key});
@@ -108,18 +111,28 @@ class OnBoardingScreens extends StatelessWidget {
                                         const Duration(milliseconds: 1000),
                                     curve: Curves.fastLinearToSlowEaseIn);
                               },
-                              style: Theme.of(context).elevatedButtonTheme.style,
+                              style:
+                                  Theme.of(context).elevatedButtonTheme.style,
                               child: const Text(AppStrings.next),
                             )
                           : ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 //navigate to home screen
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => const HomeScreen()));
+                                await sl<CacheHelper>()
+                                    .saveData(
+                                        key: AppStrings.onBoardingKey,
+                                        value: true)
+                                    .then((value) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => const HomeScreen()));
+                                }).catchError((e) {
+                                  print(e.toString());
+                                });
                               },
-                              style: Theme.of(context).elevatedButtonTheme.style,
+                              style:
+                                  Theme.of(context).elevatedButtonTheme.style,
                               child: const Text(AppStrings.getStarted),
                             ),
                     ],

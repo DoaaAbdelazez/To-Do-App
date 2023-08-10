@@ -1,10 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:to_do_app/core/database/cache/cache_helper.dart';
 import 'package:to_do_app/core/utils/app_colors.dart';
 import 'package:to_do_app/core/utils/app_strings.dart';
 import 'package:to_do_app/features/auth/presentation/screens/on_boarding_screens/on_boarding_screens.dart';
+import 'package:to_do_app/features/task/presentation/screens/home_screen.dart';
 
+import '../../../../../core/services/service_locator.dart';
 import '../../../../../core/utils/app_assets.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,8 +23,9 @@ class _SplashScreenState extends State<SplashScreen> {
     navigate();
   }
 void navigate(){
+ bool isVisted= sl<CacheHelper>().getData(key: AppStrings.onBoardingKey)?? false;
   Future.delayed(const Duration(seconds: 3),(){
-  Navigator.push(context, MaterialPageRoute(builder: (_)=> OnBoardingScreens()));
+  Navigator.push(context, MaterialPageRoute(builder: (_)=>isVisted? const HomeScreen():OnBoardingScreens()));
   });
 }
 
