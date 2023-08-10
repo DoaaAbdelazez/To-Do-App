@@ -6,7 +6,7 @@ import 'core/services/service_locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setup();
+await  setup();
 await sl<CacheHelper>().init();
 
   runApp(const MyApp());
