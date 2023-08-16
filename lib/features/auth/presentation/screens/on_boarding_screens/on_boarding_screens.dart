@@ -9,7 +9,7 @@ import 'package:to_do_app/core/utils/app_colors.dart';
 import 'package:to_do_app/core/utils/app_strings.dart';
 import 'package:to_do_app/core/utils/widgets/custom_text_button.dart';
 import 'package:to_do_app/features/auth/data/model/on_boarding_moddel.dart';
-import 'package:to_do_app/features/task/presentation/screens/home_screen.dart';
+import 'package:to_do_app/features/task/presentation/screens/home_screen/home_screen.dart';
 
 import '../../../../../core/commons/commons.dart';
 import '../../../../../core/services/service_locator.dart';
