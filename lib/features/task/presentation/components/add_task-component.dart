@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/utils/app_strings.dart';
 
 class AddTaskComponent extends StatelessWidget {
-  const AddTaskComponent({super.key, required this.title, required this.hintText,  this.controller, this.suffixIcon,  this.readOnly=false});
+  const AddTaskComponent(
+      {super.key,
+      required this.title,
+      required this.hintText,
+      this.controller,
+      this.suffixIcon,
+      this.readOnly = false});
   final String title;
   final String hintText;
   final TextEditingController? controller;
   final IconButton? suffixIcon;
-  final bool readOnly ;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -16,19 +23,19 @@ class AddTaskComponent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-title,
+          title,
           style: Theme.of(context).textTheme.displayMedium,
         ),
-        const SizedBox(
-          height: 8,
+        SizedBox(
+          height: 8.h,
         ),
         TextFormField(
-          readOnly:readOnly ,
+          readOnly: readOnly,
           controller: controller,
           decoration: InputDecoration(
             //hint
             hintText: hintText,
-            suffixIcon:suffixIcon, 
+            suffixIcon: suffixIcon,
           ),
         ),
       ],
