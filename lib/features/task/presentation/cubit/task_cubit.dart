@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:to_do_app/core/database/sqflite_helper/sqflite_helper.dart';
+import 'package:to_do_app/core/services/service_locator.dart';
 import 'package:to_do_app/features/task/data/model/task_model.dart';
 import 'package:to_do_app/features/task/presentation/cubit/task_state.dart';
 
@@ -99,9 +101,8 @@ class TaskCubit extends Cubit<TaskState> {
   List<TaskModel> tasksList = [];
   void insertTask() async {
     emit(InsertTaskLoadingState());
-    try {
-    await  Future.delayed(const Duration(seconds: 2));
-      tasksList.add(
+  try {
+      await sl<SqfliteHelper>().insertToDB(
         TaskModel(
           date: DateFormat.yMd().format(currentdate),
           title: titleController.text,
@@ -112,6 +113,7 @@ class TaskCubit extends Cubit<TaskState> {
           color: currentIndex,
         ),
       );
+      getTasks();
       titleController.clear();
       noteController.clear();
       emit(InsertTaskSucessState());
@@ -119,4 +121,24 @@ class TaskCubit extends Cubit<TaskState> {
       emit(InsertTaskErrorState());
     }
   }
+
+//!get Tasks
+  void getTasks() async {
+    emit(GetDateLoadingState());
+    await sl<SqfliteHelper>().getFromDB().then((value) {
+      tasksList = value
+          .map((e) => TaskModel.fromJson(e))
+          .toList();
+          // .where(
+          //   (element) => element.date == DateFormat.yMd().format(selctedDate),
+          // )
+          // .toList();
+      emit(GetDateSucessState());
+    }).catchError((e) {
+      print(e.toString());
+      emit(GetDateErrorState());
+    });
+  }
+
+
 }

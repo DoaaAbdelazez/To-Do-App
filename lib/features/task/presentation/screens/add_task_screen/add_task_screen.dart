@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:to_do_app/core/commons/commons.dart';
 import 'package:to_do_app/core/utils/app_colors.dart';
 import 'package:to_do_app/core/utils/app_strings.dart';
 import 'package:to_do_app/core/utils/widgets/custom_button.dart';
@@ -21,9 +23,10 @@ class AddTaskScreen extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0.0,
-        centerTitle: false,
+        centerTitle: false, 
         leading: IconButton(
           onPressed: () {
+            showToast(message: 'Added Sucessfully', state: ToastStates.sucess);
             Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back_ios_new_outlined),
