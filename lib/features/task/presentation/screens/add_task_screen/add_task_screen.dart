@@ -1,34 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_app/core/utils/app_colors.dart';
 import 'package:to_do_app/core/utils/app_strings.dart';
 import 'package:to_do_app/core/utils/widgets/custom_button.dart';
 import 'package:to_do_app/core/utils/widgets/custom_text_button.dart';
+import 'package:to_do_app/features/task/data/model/task_model.dart';
+import 'package:to_do_app/features/task/presentation/cubit/task_cubit.dart';
+import 'package:to_do_app/features/task/presentation/cubit/task_state.dart';
 
 import '../../components/add_task-component.dart';
 
-class AddTaskScreen extends StatefulWidget {
+class AddTaskScreen extends StatelessWidget {
   const AddTaskScreen({super.key});
 
   @override
-  State<AddTaskScreen> createState() => _AddTaskScreenState();
-}
-
-class _AddTaskScreenState extends State<AddTaskScreen> {
-  TextEditingController titleController = TextEditingController();
-
-  TextEditingController noteController = TextEditingController();
-
-  DateTime currentdate = DateTime.now();
-  String startTime = DateFormat('hh:mm a').format(DateTime.now());
-  String endTime = DateFormat('hh:mm a')
-      .format(DateTime.now().add(const Duration(minutes: 45)));
-  int currentIndex = 0;
-  @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.height);
-    print(MediaQuery.of(context).size.width);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -45,190 +33,196 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           style: Theme.of(context).textTheme.displayLarge,
         ),
       ),
-      body: Form(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //! title
-                AddTaskComponent(
-                  controller: titleController,
-                  title: AppStrings.title,
-                  hintText: AppStrings.titleHint,
-                ),
-                SizedBox(
-                  height: 24.h,
-                ),
-                //! note
-                AddTaskComponent(
-                  controller: noteController,
-                  title: AppStrings.note,
-                  hintText: AppStrings.noteHint,
-                ),
-                SizedBox(
-                  height: 24.h,
-                ),
-                //! date
-                pickDate(context),
-                SizedBox(
-                  height: 24.h,
-                ),
-                //! start-End time
-                Row(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: BlocConsumer<TaskCubit, TaskState>(
+            listener: (context, state) {
+              if (state is InsertTaskSucessState) {
+                Navigator.pop(context);
+              }
+            },
+            builder: (context, state) {
+              final cubit = BlocProvider.of<TaskCubit>(context);
+              return Form(
+                key: BlocProvider.of<TaskCubit>(context).formkey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    //start
-                    Expanded(
-                      child: AddTaskComponent(
-                        readOnly: true,
-                        title: AppStrings.startTime,
-                        hintText: startTime,
-                        suffixIcon: IconButton(
-                          onPressed: () async {
-                            TimeOfDay? pickedStartTime = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.fromDateTime(
-                                DateTime.now(),
-                              ),
-                            );
-                            if (pickedStartTime != null) {
-                              setState(() {
-                                startTime = pickedStartTime.format(context);
-                              });
-                            } else {
-                              print('pickedStartTime==null');
-                            }
-                          },
-                          icon: const Icon(Icons.timer_outlined),
+                    //! title
+                    AddTaskComponent(
+                      controller:
+                          BlocProvider.of<TaskCubit>(context).titleController,
+                      title: AppStrings.title,
+                      hintText: AppStrings.titleHint,
+                      validator: (val){
+                        if(val!.isEmpty){
+                          return AppStrings.tittleErrorMs;
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      height: 24.h,
+                    ),
+                    //! note
+                    AddTaskComponent(
+                      controller:
+                          BlocProvider.of<TaskCubit>(context).noteController,
+                      title: AppStrings.note,
+                      hintText: AppStrings.noteHint,
+                      validator: (val){
+                        if(val!.isEmpty){
+                          return AppStrings.noteErrorMs;
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      height: 24.h,
+                    ),
+                    //! date
+                    AddTaskComponent(
+                      readOnly: true,
+                      title: AppStrings.date,
+                      hintText: DateFormat.yMd().format(
+                          BlocProvider.of<TaskCubit>(context).currentdate),
+                      suffixIcon: IconButton(
+                        onPressed: () async {
+                          BlocProvider.of<TaskCubit>(context).getDate(context);
+                        },
+                        icon: const Icon(
+                          Icons.calendar_month,
                           color: AppColors.white,
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      width: 26,
+                    SizedBox(
+                      height: 24.h,
                     ),
-                    //End
-                    Expanded(
-                      child: AddTaskComponent(
-                        readOnly: true,
-                        title: AppStrings.endTime,
-                        hintText: endTime,
-                        suffixIcon: IconButton(
-                          onPressed: () async {
-                            TimeOfDay? pickedEndTime = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.fromDateTime(
-                                DateTime.now(),
-                              ),
-                            );
-                            if (pickedEndTime != null) {
-                              setState(() {
-                                endTime = pickedEndTime.format(context);
-                              });
-                            } else {
-                              print('pickedStartTime==null');
-                            }
-                          },
-                          icon: const Icon(Icons.timer_outlined),
-                          color: AppColors.white,
+                    //! start-End time
+                    Row(
+                      children: [
+                        //start
+                        Expanded(
+                          child: AddTaskComponent(
+                            readOnly: true,
+                            title: AppStrings.startTime,
+                            hintText:
+                                BlocProvider.of<TaskCubit>(context).startTime,
+                            suffixIcon: IconButton(
+                              onPressed: () async {
+                                BlocProvider.of<TaskCubit>(context)
+                                    .getStartTime(context);
+                              },
+                              icon: const Icon(Icons.timer_outlined),
+                              color: AppColors.white,
+                            ),
+                          ),
                         ),
+                        const SizedBox(
+                          width: 26,
+                        ),
+                        //End
+                        Expanded(
+                          child: AddTaskComponent(
+                            readOnly: true,
+                            title: AppStrings.endTime,
+                            hintText:
+                                BlocProvider.of<TaskCubit>(context).endTime,
+                            suffixIcon: IconButton(
+                              onPressed: () async {
+                                BlocProvider.of<TaskCubit>(context)
+                                    .getEndtTime(context);
+                              },
+                              icon: const Icon(Icons.timer_outlined),
+                              color: AppColors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 24.h,
+                    ),
+                    //!color
+                    SizedBox(
+                      height: 68.h,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //color
+                          Text(
+                            AppStrings.color,
+                            style: Theme.of(context).textTheme.displayMedium,
+                          ),
+                          SizedBox(
+                            height: 8.h,
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 6,
+                              itemBuilder: (context, index) {
+                                return Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        BlocProvider.of<TaskCubit>(context)
+                                            .changeCheckMarkIndex(index);
+                                      },
+                                      child: CircleAvatar(
+                                        backgroundColor:
+                                            BlocProvider.of<TaskCubit>(context)
+                                                .getColor(index),
+                                        child: index ==
+                                                BlocProvider.of<TaskCubit>(
+                                                        context)
+                                                    .currentIndex
+                                            ? const Icon(Icons.check)
+                                            : null,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 8.w,
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+
+                    //! add task button
+                    SizedBox(
+                      height: 92.h,
+                    ),
+                    state is InsertTaskLoadingState
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                          ))
+                        : SizedBox(
+                            height: 48.h,
+                            width: double.infinity,
+                            child: CustomButton(
+                                text: AppStrings.creatTask,
+                                onPressed: () {
+                                  if (BlocProvider.of<TaskCubit>(context)
+                                      .formkey
+                                      .currentState!
+                                      .validate()) {
+                                    BlocProvider.of<TaskCubit>(context)
+                                        .insertTask();
+                                  }
+                                }),
+                          ),
                   ],
                 ),
-                SizedBox(
-                  height: 24.h,
-                ),
-                //!color
-                SizedBox(
-                  height: 68.h,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //color
-                      Text(
-                        AppStrings.color,
-                        style: Theme.of(context).textTheme.displayMedium,
-                      ),
-                      SizedBox(
-                        height: 8.h,
-                      ),
-                      Expanded(
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 6,
-                          itemBuilder: (context, index) {
-                            Color getColor(index) {
-                              switch (index) {
-                                case 0:
-                                  return AppColors.red;
-                                case 1:
-                                  return AppColors.green;
-                                case 2:
-                                  return AppColors.blueGrey;
-                                case 3:
-                                  return AppColors.blue;
-                                case 4:
-                                  return AppColors.orange;
-                                case 5:
-                                  return AppColors.purple;
-                                default:
-                                  return AppColors.grey;
-                              }
-                            }
-
-                            return Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      currentIndex = index;
-                                    });
-                                  },
-                                  child: CircleAvatar(
-                                    backgroundColor: getColor(index),
-                                    child: index == currentIndex
-                                        ? const Icon(Icons.check)
-                                        : null,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 8.w,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-
-                      // const Row(
-                      //   children: [
-                      //     CircleAvatar(
-                      //       backgroundColor: AppColors.red,
-                      //     ),
-                      //     SizedBox(width: ,)
-                      //     CircleAvatar(
-                      //       backgroundColor: AppColors.red,
-                      //     ),
-                      //   ],
-                      // ),
-                    ],
-                  ),
-                ),
-
-                //! add task button
-                SizedBox(
-                  height: 104.h,
-                ),
-                SizedBox(
-                  height: 48.h,
-                  width: double.infinity,
-                  child: CustomButton(
-                      text: AppStrings.creatTask, onPressed: () {}),
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -238,7 +232,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   AddTaskComponent pickDate(BuildContext context) {
     return AddTaskComponent(
       title: AppStrings.date,
-      hintText: DateFormat.yMd().format(currentdate),
+      hintText: DateFormat.yMd()
+          .format(BlocProvider.of<TaskCubit>(context).currentdate),
       suffixIcon: IconButton(
           onPressed: () async {
             DateTime? pickedDate = await showDatePicker(
@@ -247,13 +242,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               firstDate: DateTime.now(),
               lastDate: DateTime(2025),
             );
-            setState(() {
-              if (pickedDate != null) {
-                currentdate = pickedDate;
-              } else {
-                print('pickedDate == null');
-              }
-            });
+            // setState(() {
+            //   if (pickedDate != null) {
+            //     currentdate = pickedDate;
+            //   } else {
+            //     print('pickedDate == null');
+            //   }
+            // });
           },
           icon: const Icon(
             Icons.calendar_month_rounded,

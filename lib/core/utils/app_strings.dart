@@ -32,5 +32,7 @@ class AppStrings {
   static const String deletTask = ' Delete Task';
   static const String cancle = ' Cancle';
   static const String onBoardingKey = 'onBoarding';
+  static const String noteErrorMs =  'Enter Valid Note';
+  static const String tittleErrorMs =  'Enter Valid Tittle';
   
 }

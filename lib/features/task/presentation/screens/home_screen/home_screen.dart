@@ -1,5 +1,6 @@
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_app/core/commons/commons.dart';
 import 'package:to_do_app/core/utils/app_assets.dart';
@@ -7,6 +8,9 @@ import 'package:to_do_app/core/utils/app_colors.dart';
 import 'package:to_do_app/core/utils/app_strings.dart';
 import 'package:to_do_app/core/utils/widgets/custom_button.dart';
 import 'package:to_do_app/core/utils/widgets/custom_text_button.dart';
+import 'package:to_do_app/features/task/data/model/task_model.dart';
+import 'package:to_do_app/features/task/presentation/cubit/task_cubit.dart';
+import 'package:to_do_app/features/task/presentation/cubit/task_state.dart';
 
 import '../add_task_screen/add_task_screen.dart';
 
@@ -15,103 +19,124 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //date now
-            Text(
-              DateFormat.yMMMMd().format(DateTime.now()),
-              style: Theme.of(context).textTheme.displayLarge,
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            //today
-            Text(AppStrings.toDay,
-                style: Theme.of(context).textTheme.displayLarge),
-
-            //DAte picker
-            DatePicker(
-              DateTime.now(),
-              initialSelectedDate: DateTime.now(),
-              selectionColor: AppColors.primary,
-              selectedTextColor: AppColors.white,
-              dateTextStyle: Theme.of(context).textTheme.displayMedium!,
-              dayTextStyle: Theme.of(context).textTheme.displayMedium!,
-              monthTextStyle: Theme.of(context).textTheme.displayMedium!,
-              onDateChange: (date) {
-                // New date selected
-                // setState(() {
-                //   _selectedValue = date;
-                // });
-              },
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            //no tasks
-            // noTasksWidget(context),
-            // Text(AppStrings.noTaskSubTitle,
-            //     style: Theme.of(context).textTheme.displayMedium),
-
-            InkWell(
-                onTap: () {
-                  showModalBottomSheet(
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          padding: const EdgeInsets.all(24),
-                          height: 240,
-                          color: AppColors.deepGrey,
-                          child: Column(
-                            children: [
-                              //task Completed
-                              SizedBox(
-                                height: 48,
-                                width: double.infinity,
-                                child: CustomButton(
-                                    text: AppStrings.taskCompleted,
-                                    onPressed: () {},),
-                              ),
-                                                            const SizedBox(height:24),
-
-                              //deletTask
-                              SizedBox(
-                                height: 48,
-                                width: double.infinity,
-                                child: CustomButton(
-                                    text: AppStrings.deletTask,
-                                    backgroundColor: AppColors.red,
-                                    onPressed: () {},),
-                              ),
-                              const SizedBox(height:24),
-                              //cancle
-                              SizedBox(
-                                height: 48,
-                                width: double.infinity,
-                                child: CustomButton(
-                                    text: AppStrings.cancle,
-                                    onPressed: () {},),
-                              ),
-                            ],
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: BlocBuilder<TaskCubit, TaskState>(
+            builder: (context, state) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //date now
+                  Text(
+                    DateFormat.yMMMMd().format(DateTime.now()),
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  //today
+                  Text(AppStrings.toDay,
+                      style: Theme.of(context).textTheme.displayLarge),
+    
+                  //DAte picker
+                  DatePicker(
+                    DateTime.now(),
+                    initialSelectedDate: DateTime.now(),
+                    selectionColor: AppColors.primary,
+                    selectedTextColor: AppColors.white,
+                    dateTextStyle: Theme.of(context).textTheme.displayMedium!,
+                    dayTextStyle: Theme.of(context).textTheme.displayMedium!,
+                    monthTextStyle: Theme.of(context).textTheme.displayMedium!,
+                    onDateChange: (date) {
+                      // New date selected
+                      // setState(() {
+                      //   _selectedValue = date;
+                      // });
+                    },
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  //no tasks
+                  BlocProvider.of<TaskCubit>(context).tasksList.isEmpty
+                      ? noTasksWidget(context)
+                      : Expanded(
+                          child: ListView.builder(
+                            itemCount: BlocProvider.of<TaskCubit>(context)
+                                .tasksList
+                                .length,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return Container(
+                                            padding: const EdgeInsets.all(24),
+                                            height: 240,
+                                            color: AppColors.deepGrey,
+                                            child: Column(
+                                              children: [
+                                                //task Completed
+                                                SizedBox(
+                                                  height: 48,
+                                                  width: double.infinity,
+                                                  child: CustomButton(
+                                                    text:
+                                                        AppStrings.taskCompleted,
+                                                    onPressed: () {},
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 24),
+    
+                                                //deletTask
+                                                SizedBox(
+                                                  height: 48,
+                                                  width: double.infinity,
+                                                  child: CustomButton(
+                                                    text: AppStrings.deletTask,
+                                                    backgroundColor:
+                                                        AppColors.red,
+                                                    onPressed: () {},
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 24),
+                                                //cancle
+                                                SizedBox(
+                                                  height: 48,
+                                                  width: double.infinity,
+                                                  child: CustomButton(
+                                                    text: AppStrings.cancle,
+                                                    onPressed: () {},
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        });
+                                  },
+                                  child: taskComponent(
+                                    taskModel: BlocProvider.of<TaskCubit>(context)
+                                        .tasksList[index],
+                                  ));
+                            },
                           ),
-                        );
-                      });
-                },
-                child: const taskComponent()),
-          ],
+                        ),
+                ],
+              );
+            },
+          ),
         ),
-      ),
-      //FAB
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          navigate(context: context, screen:  AddTaskScreen());
-        },
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add),
+        //FAB
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            navigate(context: context, screen: AddTaskScreen());
+          },
+          backgroundColor: AppColors.primary,
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -126,6 +151,8 @@ class HomeScreen extends StatelessWidget {
                 fontSize: 24,
               ),
         ),
+        Text(AppStrings.noTaskSubTitle,
+            style: Theme.of(context).textTheme.displayMedium),
       ],
     );
   }
@@ -134,15 +161,16 @@ class HomeScreen extends StatelessWidget {
 class taskComponent extends StatelessWidget {
   const taskComponent({
     super.key,
+    required this.taskModel,
   });
-
+  final TaskModel taskModel;
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 132,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: AppColors.red,
+        color: BlocProvider.of<TaskCubit>(context).getColor(context),
         borderRadius: BorderRadius.circular(16),
       ),
       margin: const EdgeInsets.only(bottom: 16),
@@ -153,9 +181,9 @@ class taskComponent extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //text
+                //tittle
                 Text(
-                  'Task 1',
+                  taskModel.title,
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
                 const SizedBox(
@@ -173,7 +201,7 @@ class taskComponent extends StatelessWidget {
                       width: 8,
                     ),
                     Text(
-                      '09:33 PM - 09:48 PM',
+                      '${taskModel.startTime} - ${taskModel.endTime}',
                       style: Theme.of(context).textTheme.displayMedium,
                     ),
                   ],
@@ -182,9 +210,9 @@ class taskComponent extends StatelessWidget {
                   height: 8,
                 ),
 
-                //text
+                //note
                 Text(
-                  'Learn Dart',
+                  taskModel.note,
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
               ],
@@ -201,7 +229,9 @@ class taskComponent extends StatelessWidget {
           RotatedBox(
               quarterTurns: 3,
               child: Text(
-                AppStrings.toDo,
+                taskModel.isCompleted == 1
+                    ? AppStrings.completed
+                    : AppStrings.toDo,
                 style: Theme.of(context).textTheme.displayMedium,
               )),
         ],
