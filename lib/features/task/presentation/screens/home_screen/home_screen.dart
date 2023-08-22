@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
                   //today
                   Text(AppStrings.toDay,
                       style: Theme.of(context).textTheme.displayLarge),
-    
+
                   //DAte picker
                   DatePicker(
                     DateTime.now(),
@@ -80,17 +80,33 @@ class HomeScreen extends StatelessWidget {
                                             child: Column(
                                               children: [
                                                 //task Completed
-                                                SizedBox(
+                                              BlocProvider.of<TaskCubit>(
+                                                              context)
+                                                          .tasksList[index]
+                                                          .isCompleted ==
+                                                      1
+                                                  ? Container()
+                                                  :   SizedBox(
                                                   height: 48,
                                                   width: double.infinity,
                                                   child: CustomButton(
-                                                    text:
-                                                        AppStrings.taskCompleted,
-                                                    onPressed: () {},
+                                                    text: AppStrings
+                                                        .taskCompleted,
+                                                    onPressed: () {
+                                                      BlocProvider.of<
+                                                                  TaskCubit>(
+                                                              context)
+                                                          .updateTask(BlocProvider
+                                                                  .of<TaskCubit>(
+                                                                      context)
+                                                              .tasksList[index]
+                                                              .id);
+                                                            Navigator.pop(context);
+                                                    },
                                                   ),
                                                 ),
                                                 const SizedBox(height: 24),
-    
+
                                                 //deletTask
                                                 SizedBox(
                                                   height: 48,
@@ -109,7 +125,9 @@ class HomeScreen extends StatelessWidget {
                                                   width: double.infinity,
                                                   child: CustomButton(
                                                     text: AppStrings.cancle,
-                                                    onPressed: () {},
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
                                                   ),
                                                 ),
                                               ],
@@ -118,8 +136,9 @@ class HomeScreen extends StatelessWidget {
                                         });
                                   },
                                   child: taskComponent(
-                                    taskModel: BlocProvider.of<TaskCubit>(context)
-                                        .tasksList[index],
+                                    taskModel:
+                                        BlocProvider.of<TaskCubit>(context)
+                                            .tasksList[index],
                                   ));
                             },
                           ),
@@ -170,7 +189,7 @@ class taskComponent extends StatelessWidget {
       height: 132,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: BlocProvider.of<TaskCubit>(context).getColor(context),
+        color: BlocProvider.of<TaskCubit>(context).getColor(taskModel.color),
         borderRadius: BorderRadius.circular(16),
       ),
       margin: const EdgeInsets.only(bottom: 16),
