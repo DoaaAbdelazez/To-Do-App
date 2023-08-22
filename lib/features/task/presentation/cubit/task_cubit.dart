@@ -12,6 +12,7 @@ class TaskCubit extends Cubit<TaskState> {
   TaskCubit() : super(TaskInitial());
 
   DateTime currentdate = DateTime.now();
+  DateTime selectedDate = DateTime.now();
   String startTime = DateFormat('hh:mm a').format(DateTime.now());
   String endTime = DateFormat('hh:mm a')
       .format(DateTime.now().add(const Duration(minutes: 45)));
@@ -98,10 +99,18 @@ class TaskCubit extends Cubit<TaskState> {
     currentIndex = index;
   }
 
+  void getSelectedDate(date) {
+    emit(GetSelectedDateLoadingState());
+    selectedDate = date;
+
+    emit(GetSelectedDateSucessState());
+    getTasks();
+  }
+
   List<TaskModel> tasksList = [];
   void insertTask() async {
     emit(InsertTaskLoadingState());
-  try {
+    try {
       await sl<SqfliteHelper>().insertToDB(
         TaskModel(
           date: DateFormat.yMd().format(currentdate),
@@ -128,17 +137,18 @@ class TaskCubit extends Cubit<TaskState> {
     await sl<SqfliteHelper>().getFromDB().then((value) {
       tasksList = value
           .map((e) => TaskModel.fromJson(e))
+          .toList()
+          .where(
+            (element) => element.date == DateFormat.yMd().format(selectedDate),
+          )
           .toList();
-          // .where(
-          //   (element) => element.date == DateFormat.yMd().format(selctedDate),
-          // )
-          // .toList();
       emit(GetDateSucessState());
     }).catchError((e) {
       print(e.toString());
       emit(GetDateErrorState());
     });
   }
+
 //update Task
   void updateTask(id) async {
     emit(UpdateTaskLoadingState());
@@ -152,7 +162,16 @@ class TaskCubit extends Cubit<TaskState> {
     });
   }
 
+//delete task
+  void deleteTask(id) async {
+    emit(DeleteTaskLoadingState());
 
-
-
+    await sl<SqfliteHelper>().deleteFromDB(id).then((value) {
+      emit(DeleteTaskSucessState());
+      getTasks();
+    }).catchError((e) {
+      print(e.toString());
+      emit(DeleteTaskErrorState());
+    });
+  }
 }

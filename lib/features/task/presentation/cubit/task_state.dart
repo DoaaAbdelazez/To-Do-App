@@ -40,3 +40,13 @@ final class UpdateTaskLoadingState extends TaskState {}
 final class UpdateTaskSucessState extends TaskState {}
 
 final class UpdateTaskErrorState extends TaskState {}
+final class DeleteTaskLoadingState extends TaskState {}
+
+final class DeleteTaskSucessState extends TaskState {}
+
+final class DeleteTaskErrorState extends TaskState {}
+final class GetSelectedDateLoadingState extends TaskState {}
+
+final class GetSelectedDateSucessState extends TaskState {}
+
+
