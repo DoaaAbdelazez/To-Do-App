@@ -3,66 +3,64 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../utils/app_colors.dart';
 
+ThemeData getAppDarkTheme() {
+  return ThemeData(
+    primaryColor: AppColors.primary,
+    //scaffoldBackgroundColor
+    scaffoldBackgroundColor: AppColors.background,
+    //AppBar theme
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.background,
+      centerTitle: true,
+    ),
+    //text them
+    textTheme: TextTheme(
+      displayLarge: GoogleFonts.lato(
+          color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 32),
+      displayMedium: GoogleFonts.lato(color: AppColors.white, fontSize: 16),
+      displaySmall: GoogleFonts.lato(
+          color: AppColors.white.withOpacity(0.44), fontSize: 16),
+    ),
+
+    //button theme
+    elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8)))),
+    inputDecorationTheme: InputDecorationTheme(
+      //enabled border
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      //fouced border
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      //hintn
+      hintStyle: GoogleFonts.lato(color: AppColors.white, fontSize: 16),
+      //fill color
+      fillColor: AppColors.lightBlack, filled: true,
+    ),
+  );
+}
+
 ThemeData getAppTheme() {
   return ThemeData(
       primaryColor: AppColors.primary,
       //scaffoldBackgroundColor
-      scaffoldBackgroundColor: AppColors.background,
-      //AppBar theme
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.background,
-        centerTitle: true,
-      ),
-      //text them
-      textTheme: TextTheme(
-        displayLarge: GoogleFonts.lato(
-            color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 32),
-        displayMedium: GoogleFonts.lato(color: AppColors.white, fontSize: 16),
-        displaySmall: GoogleFonts.lato(
-            color: AppColors.white.withOpacity(0.44), fontSize: 16),
-      ),
-
-      //button theme
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            shape:
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)))),
-                  inputDecorationTheme: InputDecorationTheme(
-                    //enabled border
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  //fouced border
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  //hintn
-                  hintStyle: GoogleFonts.lato(color: AppColors.white, fontSize: 16),
-                  //fill color
-                  fillColor: AppColors.lightBlack, filled: true,
-                  ),
-                  );
-}
-
-
-
-ThemeData getAppDarkTheme() {
-  return ThemeData(
-      primaryColor: AppColors.red,
-      //scaffoldBackgroundColor
       scaffoldBackgroundColor: AppColors.white,
       //AppBar theme
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.white,
         centerTitle: true,
       ),
       //text them
       textTheme: TextTheme(
         displayLarge: GoogleFonts.lato(
-            color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 32),
-        displayMedium: GoogleFonts.lato(color: AppColors.white, fontSize: 16),
+            color: AppColors.background,
+            fontWeight: FontWeight.bold,
+            fontSize: 32),
+        displayMedium:
+            GoogleFonts.lato(color: AppColors.background, fontSize: 16),
         displaySmall: GoogleFonts.lato(
-            color: AppColors.white.withOpacity(0.44), fontSize: 16),
+            color: AppColors.background.withOpacity(0.44), fontSize: 16),
       ),
 
       //button theme

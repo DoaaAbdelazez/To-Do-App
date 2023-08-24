@@ -16,7 +16,7 @@ void main() async {
   sl<SqfliteHelper>().intiDB();
 
   runApp(BlocProvider(
-    create: (context) => TaskCubit()..getTasks(),
+    create: (context) => TaskCubit()..getTheme()..getTasks(),
     child: const MyApp(),
   ));
 }

@@ -29,9 +29,25 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //date now
-                  Text(
-                    DateFormat.yMMMMd().format(DateTime.now()),
-                    style: Theme.of(context).textTheme.displayLarge,
+                  Row(
+                    children: [
+                      Text(
+                        DateFormat.yMMMMd().format(DateTime.now()),
+                        style: Theme.of(context).textTheme.displayLarge,
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () {
+                          BlocProvider.of<TaskCubit>(context).changeTheme();
+                        },
+                        icon: Icon(
+                          Icons.mode_night,
+                          color: BlocProvider.of<TaskCubit>(context).isDark
+                              ? AppColors.white
+                              : AppColors.background,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 12,
@@ -50,7 +66,7 @@ class HomeScreen extends StatelessWidget {
                     dayTextStyle: Theme.of(context).textTheme.displayMedium!,
                     monthTextStyle: Theme.of(context).textTheme.displayMedium!,
                     onDateChange: (date) {
-                       BlocProvider.of<TaskCubit>(context).getSelectedDate(date);
+                      BlocProvider.of<TaskCubit>(context).getSelectedDate(date);
                     },
                   ),
                   const SizedBox(
@@ -77,31 +93,33 @@ class HomeScreen extends StatelessWidget {
                                             child: Column(
                                               children: [
                                                 //task Completed
-                                              BlocProvider.of<TaskCubit>(
-                                                              context)
-                                                          .tasksList[index]
-                                                          .isCompleted ==
-                                                      1
-                                                  ? Container()
-                                                  :   SizedBox(
-                                                  height: 48,
-                                                  width: double.infinity,
-                                                  child: CustomButton(
-                                                    text: AppStrings
-                                                        .taskCompleted,
-                                                    onPressed: () {
-                                                      BlocProvider.of<
-                                                                  TaskCubit>(
-                                                              context)
-                                                          .updateTask(BlocProvider
-                                                                  .of<TaskCubit>(
-                                                                      context)
-                                                              .tasksList[index]
-                                                              .id);
-                                                            Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
+                                                BlocProvider.of<TaskCubit>(
+                                                                context)
+                                                            .tasksList[index]
+                                                            .isCompleted ==
+                                                        1
+                                                    ? Container()
+                                                    : SizedBox(
+                                                        height: 48,
+                                                        width: double.infinity,
+                                                        child: CustomButton(
+                                                          text: AppStrings
+                                                              .taskCompleted,
+                                                          onPressed: () {
+                                                            BlocProvider.of<
+                                                                        TaskCubit>(
+                                                                    context)
+                                                                .updateTask(BlocProvider.of<
+                                                                            TaskCubit>(
+                                                                        context)
+                                                                    .tasksList[
+                                                                        index]
+                                                                    .id);
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
                                                 const SizedBox(height: 24),
 
                                                 //deletTask
@@ -113,14 +131,15 @@ class HomeScreen extends StatelessWidget {
                                                     backgroundColor:
                                                         AppColors.red,
                                                     onPressed: () {
-                                                      BlocProvider.of<TaskCubit>(
-                                                            context)
-                                                        .deleteTask(BlocProvider
-                                                                .of<TaskCubit>(
-                                                                    context)
-                                                            .tasksList[index]
-                                                            .id);
-                                                    Navigator.pop(context);
+                                                      BlocProvider.of<
+                                                                  TaskCubit>(
+                                                              context)
+                                                          .deleteTask(BlocProvider
+                                                                  .of<TaskCubit>(
+                                                                      context)
+                                                              .tasksList[index]
+                                                              .id);
+                                                      Navigator.pop(context);
                                                     },
                                                   ),
                                                 ),
