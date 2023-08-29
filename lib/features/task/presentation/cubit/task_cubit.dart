@@ -169,12 +169,14 @@ class TaskCubit extends Cubit<TaskState> {
 
     await sl<SqfliteHelper>().deleteFromDB(id).then((value) {
       emit(DeleteTaskSucessState());
-      getTasks();
+            getTasks();
+
     }).catchError((e) {
       print(e.toString());
       emit(DeleteTaskErrorState());
     });
   }
+  
   bool isDark = false;
 
   void changeTheme() async {
@@ -183,8 +185,9 @@ class TaskCubit extends Cubit<TaskState> {
     emit(ChangeThemeState());
   }
 
-  void getTheme()async{
-  isDark =await sl<CacheHelper>().getData(key: 'isDark');
+void getTheme()async{
+  isDark =await sl<CacheHelper>().getData(key: 'isDark')?? false;
+  
   emit(GetThemeState());
 }
 

@@ -23,10 +23,9 @@ class AddTaskScreen extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0.0,
-        centerTitle: false, 
+        centerTitle: false,
         leading: IconButton(
           onPressed: () {
-            showToast(message: 'Added Sucessfully', state: ToastStates.sucess);
             Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back_ios_new_outlined),
@@ -42,6 +41,9 @@ class AddTaskScreen extends StatelessWidget {
           child: BlocConsumer<TaskCubit, TaskState>(
             listener: (context, state) {
               if (state is InsertTaskSucessState) {
+                showToast(
+                    message: 'Added Sucessfully', state: ToastStates.sucess);
+
                 Navigator.pop(context);
               }
             },
@@ -58,8 +60,8 @@ class AddTaskScreen extends StatelessWidget {
                           BlocProvider.of<TaskCubit>(context).titleController,
                       title: AppStrings.title,
                       hintText: AppStrings.titleHint,
-                      validator: (val){
-                        if(val!.isEmpty){
+                      validator: (val) {
+                        if (val!.isEmpty) {
                           return AppStrings.tittleErrorMs;
                         }
                         return null;
@@ -74,8 +76,8 @@ class AddTaskScreen extends StatelessWidget {
                           BlocProvider.of<TaskCubit>(context).noteController,
                       title: AppStrings.note,
                       hintText: AppStrings.noteHint,
-                      validator: (val){
-                        if(val!.isEmpty){
+                      validator: (val) {
+                        if (val!.isEmpty) {
                           return AppStrings.noteErrorMs;
                         }
                         return null;
